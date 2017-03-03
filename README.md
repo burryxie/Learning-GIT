@@ -7,4 +7,6 @@ Meanwhile, this is the [Github tutorial](http://youngxhui.github.io/tags/GitHub/
 
 Tips: both these two tutorials are in Chinese.
 
-Thanks bro!!
+Thanks bro!! :smiley: :cn: :es:
+
+PS: Markdown for emoji can be found [here](http://www.webpagefx.com/tools/emoji-cheat-sheet/)
