@@ -1,0 +1,92 @@
+Git使用教程笔记
+总的来说 git下文件状态可分为四种
+一 未加入git库里
+二 加入git库之后 还没进行过文件修改
+三 加入git库之后 文件又进行了修改
+四 加入git库之后 文件进行了修改 并把修改内容提交给了git库
+
+文件加入git库之后  其状态在二、三、四之间来回循环变化 
+
+1. cd D:\..\..更改当前工作目录 路径中含有空格时 需要将cd后的所有路径用''括起来
+   更简便的方法是 (1).在Windows下打开目的文件夹地址，复制地址 
+				  (2). 在git bash 中输入 cd ''  (''中间粘贴地址即可)
+2. git config --global user.name '***' 配置用户名 set user name  
+3. git config --global user.emai '***' 配置用户邮箱 set user emai
+4. git config user.name 和 git config user.email 查看当前用户配置信息 check the user info
+5. git init 初始化管理库 即生成.git隐藏文件夹 initialize git repository
+6. ls 查看当前文件夹下的所有文件，不包括隐藏文件
+7. ls -a 查看包括隐藏文件在内的所有文件
+8. pwd 查看当前所处工作目录
+9. touch filename.**  创建文件名为filename 后缀为**的文件
+10. git status 查看当前管理库的状态
+    (1)如果当前工作目录下的某个文件有更改的话 那么此时该文件会
+	   出现在git status的输出结果中的Untracked files下
+11. git add .把当前文件夹下的所有文件的状态都变为Staged状态，以便后面进行更新管理
+    git add filename.*** 仅把filename.***的状态变为Staged状态
+12. 当文件变为Staged状态后 该文件会出现在git status输出结果中的Changes to be commited 即表示此文件已经做好准备进行版本管理了
+13. 当文件的状态变为Staged之后 利用git commit -m 'messages'进行最后的commit步骤 
+    其中message由用户定义 一般用于表示此次更改的主要内容 方便日后查看
+14. 在 git 中 每一次提交(commit)的修改 都会被单独的保存起来 
+	也可以说 git 的中的所有文件都是一次次修改累积起来的 
+	文件好比楼房 每个 commit 记录了盖楼需添加或者拿走的材料 整个施工过程也被记录了下来
+	git commit -m '***'将已经staged的文件修改加入到管理库中 ***是对本次修改的记录说明
+15. git log可以输出当前库的所有操作历史记录 包括修改的作者姓名 邮箱等信息 即user.name user.email
+    git log --oneline 则可以简化输出的log结果
+16. git diff 查看这次还没 add (unstaged) 的修改部分 和 上个已经 commit 的文件有何不同
+	git diff --cached 如果已经 add 了这次修改 文件变成了 “可提交状态”时(staged)时 查看修改
+	git diff HEAD 当一个文件被add后 又对文件进行了修改但是没有add时  查看修改
+17. git commit -amend --no-edit 适用情况：假如我们已经提交了一次commmit之后 发现某个文件忘记add和commit了 但是又想把这个文件
+	一起commit到上次的commit里 其中--no-edit参数表示不编辑 直接合并到上一个commit
+18. git reset filename.*** 适用情况：假如我们已经add了某个文件 但是又想对这个文件再做一下修改 然后add。即把文件状态从staged 变为 unstaged
+19. 每个commit都有自己的id号 (即 git log -oneline 输出结果中的第一列)
+	HEAD 是一个指针, 指引当前的状态是在哪个 commit
+	git reset --hard HEAD^将指针指向上一个commit 此时git log --oneline只输出这个commit及之前的log信息
+20. git reflog 可以查看最近做的所有的HEAD的改动 通过查看commit id和对应的更改记录说明 来调整HEAD指向的位置
+	如 git rest --hard ***就可以将HEAD回到***这个id所对应的commit 即回到版本管理库的某个过去
+21. git checkout  commit id --filename.***即把filename单个文件回到commit id所对应到的版本管理库的过去 而其他文件没有改动
+22. 很多时候我们需要给自己或者客户用一个稳定的版本库, 然后同时还在开发另外一个升级版. 自然而然, 我们会想到把这两者分开处理, 用户使用稳定版, 
+	我们开发我们的开发版. 不过 git 的做法却不一样, 它把这两者融合成了一个文件, 使用不同的分支来管理.
+	之前我们说编辑的所有改变都是在一条主分支 master 上进行的. 通常我们会把 master 当作最终的版本, 而开发新版本或者新属性的时候, 在另外一个分支上进行, 
+	这样就能使开发和使用互不干扰了. 
+23. git log --oneline --graph输出管理库的图形化分支状态信息
+24. git  branch ***创建新的branch 并命名为***
+	git branch 查看当前HEAD所在的branch (输出结果中*代表了HEAD当前所在的branch)
+25. git checkout *** 将HEAD定位到***这个branch
+	git checkout -b ***直接创建并将HEAD指向***这个新建的分支
+	git创建新的branch时 将会继承来自master当前版本库中的所有文件
+	在某个branch上对文件的修改将不会影响到master上对应的文件
+26. 假如我们已经在某个branch上对文件进行了修改之后 想要把修改的内容添加到master上去
+	(1) 首先将HEAD定位到master git checkout master
+	(2) git merge *** 将***这个branch的修改添加到master
+	要注意的是, 如果直接 git merge dev, git 会采用默认的 Fast forward 格式进行 merge, 这样 merge 的这次操作不会有 commit 信息. 
+	log 中也不会有分支的图案. 我们可以采取 --no-ff 这种方式保留 merge 的 commit 信息.
+	即 git merge --no-ff -m '***' ***
+	然后即可通过git log --oneline --graph查看分支新建和merge的变化情况
+27. 当不仅有人在做开发版 dev 的更新, 还有人在修改 master 中的一些 bug. 
+	当我们再 merge dev 的时候, 冲突就来了. 因为 git 不知道应该怎么处理 merge 时, 在 master 和 dev 的不同修改.
+	也就是说 当我们git merge ***的时候 git的输出中会告诉我们在master中的某个文件和***这个branch中对应的文件之间存在conflict
+	并且git会把冲突的具体位置标记到对应的文件中 
+	然后我们就可以打开这个文件手动修改对应的conflict
+	然后再进行git commit -am '***'就可以解决conflict了
+28. rebase的操作参考https://morvanzhou.github.io/tutorials/others/git/4-3-rebase/
+29. git remote add origin url(其中url为github上某个repositery的地址) 
+	将本地git库与远程git库建立连接
+30. git push -u origin branch将本地git库的某个branch推送到远程
+31. 删除github上某个repoistery
+	(1)将这个repositery的url后面加上'/settings' 并跳转到修改后的url
+	(2)在Danger zone下找到delete即可删除
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
